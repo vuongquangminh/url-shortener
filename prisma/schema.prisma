@@ -8,12 +8,27 @@ datasource db {
 
 model Url {
   id          Int   @id @default(autoincrement())
-  originalUrl String   @map("original_url")
+  originalUrl String   @unique @map("original_url")
   shortCode   String   @unique @map("short_code")
   clickCount  Int      @default(0) @map("click_count")
   createdAt   DateTime @default(now()) @map("created_at")
 
-  @@index([shortCode])
+  clicks      UrlClick[]
+
   @@index([createdAt])
   @@map("urls")
+}
+model UrlClick {
+  id        Int      @id @default(autoincrement())
+  urlId     Int      @map("url_id")
+  ipAddress String?  @map("ip_address")
+  userAgent String?  @map("user_agent")
+  referer   String?
+  clickedAt DateTime @default(now()) @map("clicked_at")
+
+  url Url @relation(fields: [urlId], references: [id])
+
+  @@index([urlId])
+  @@index([clickedAt])
+  @@map("url_clicks")
 }

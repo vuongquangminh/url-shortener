@@ -34,7 +34,7 @@ export class UrlController {
   };
   redirect = async (req, res) => {
     const { shortCode } = req.params;
-    const originalUrl = await this.urlService.redirect(shortCode);
+    const originalUrl = await this.urlService.redirect(shortCode, req);
     return res.redirect(302, originalUrl);
   };
 }

@@ -1,7 +1,5 @@
 export const validateData = (schema, data) => {
   const result = schema.safeParse(data);
-
-  console.log("RESULT: ", result);
   if (!result.success) {
     const error = new Error("Validation error");
     error.statusCode = 400;

@@ -8,10 +8,6 @@ export class UrlRepository {
     return result;
   }
 
-  async findAll() {
-    return prisma.url.findMany();
-  }
-
   async findByShortCode(shortCode) {
     return prisma.url.findUnique({
       where: {

@@ -1,0 +1,18 @@
+const express = require('express');
+const { url } = require('inspector');
+const { UrlController } = require('./url.controller.js');
+
+const router = express.Router();
+
+const urlController = new UrlController();
+router.get('/test', (req, res) => {
+  res.json({
+    success: true,
+    message: 'URL module works',
+  });
+});
+
+router.post('/post', urlController.createShortUrl);
+router.get('/:shortUrl', urlController.redirectToLongUrl);
+// router.get('/:shortCode/stats', urlController.getUrlStats);
+module.exports = router;

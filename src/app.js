@@ -2,6 +2,8 @@ const express = require('express');
 const cors = require('cors');
 const helmet = require('helmet');
 const morgan = require('morgan');
+const swaggerUi = require("swagger-ui-express");
+const swaggerSpec = require("./config/swagger.js");
 
 const urlRoutes = require('./modules/urls/url.route');
 const authRoutes = require('./modules/auth/auth.route');
@@ -16,14 +18,10 @@ app.use(morgan('dev'));
 app.use(express.json());
 app.use(createUrlRateLimiter); // Apply to all requests
 
+app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
+
 const urlController = new UrlController();
 
-app.get('/health', (req, res) => {
-  res.json({
-    status: 'ok',
-    message: 'URL Shortener API is running',
-  });
-});
 app.use('/api/v1/urls', urlRoutes);
 app.get('/:shortCode', urlController.redirect)
 app.use('/api/v1/auth', authRoutes)

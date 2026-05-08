@@ -1,0 +1,49 @@
+import { validateData } from "../../utils/validateData.js";
+import { AuthService } from "./auth.service.js";
+import { createUserSchema, loginUserSchema } from "./auth.validate.js";
+
+export class AuthController {
+  constructor() {
+    this.authService = new AuthService();
+  }
+  register = async (req, res, next) => {
+    try {
+      const body = validateData(createUserSchema, req.body);
+      const user = await this.authService.register(body);
+      res.json({
+        success: true,
+        message: "User registered successfully",
+        data: {
+          user,
+        },
+      });
+    } catch (error) {
+      next(error);
+    }
+  };
+  login = async (req, res, next) => {
+    try {
+      const body = validateData(loginUserSchema, req.body);
+      const user = await this.authService.login(body);
+      res.json({
+        success: true,
+        message: "User logged in successfully",
+        data: {
+          user,
+        },
+      });
+    } catch (error) {
+      next(error);
+    }
+  };
+  getProfile = async (req, res) => {
+    const user = req.user;
+    res.json({
+      success: true,
+      message: "User profile retrieved successfully",
+      data: {
+        user,
+      },
+    });
+  };
+}

@@ -1,6 +1,5 @@
 import { Worker } from "bullmq";
 
-import { prisma } from "../config/prisma.js";
 import { UrlRepository } from "../modules/urls/url.repository.js";
 import { UrlClickRepository } from "../modules/urls/url-click.repository.js";
 

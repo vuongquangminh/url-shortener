@@ -1,5 +1,4 @@
 const express = require('express');
-const { url } = require('inspector');
 const { UrlController } = require('./url.controller.js');
 
 const router = express.Router();

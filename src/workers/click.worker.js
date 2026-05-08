@@ -10,7 +10,7 @@ const worker = new Worker(
   "click-tracking",
 
   async (job) => {
-    const {  ipAddress, userAgent, referer, shortCode } = job.data;
+    const { ipAddress, userAgent, referer, shortCode } = job.data;
     console.log(`Job ${job.id} is active`);
     const urlData = await urlRepository.findByShortCode(shortCode);
     const data = {

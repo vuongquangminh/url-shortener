@@ -6,7 +6,8 @@
     "dev": "nodemon src/server.js",
     "start": "node src/server.js",
     "prisma:migrate": "prisma migrate dev",
-    "prisma:studio": "prisma studio"
+    "prisma:studio": "prisma studio",
+    "worker": "node src/workers/click.worker.js"
   },
   "keywords": [],
   "author": "",

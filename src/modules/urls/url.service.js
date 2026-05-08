@@ -8,26 +8,27 @@ export class UrlService {
   constructor() {
     this.urlRepository = new UrlRepository();
   }
-  async create(url) {
+  async create(url, userId) {
     const shortCode = nanoid();
     const urlData = {
       originalUrl: url,
+      userId,
       shortCode,
     };
     const result = await this.urlRepository.create(urlData);
-    const cacheKey = `${this.#cacheKeyPrefix + result.shortCode}`;
+    const cacheKey = `${this.#cacheKeyPrefix + userId + result.shortCode}`;
     await redisClient.set(cacheKey, result.originalUrl, {
       EX: 60 * 60,
     });
     return result;
   }
-  async getLongUrl(shortCode) {
-    const cacheKey = `${this.#cacheKeyPrefix + shortCode}`;
+  async getLongUrl(shortCode, userId) {
+    const cacheKey = `${this.#cacheKeyPrefix + shortCode}|${userId}`;
     const cachedUrl = await redisClient.get(cacheKey);
     if (cachedUrl) {
       return cachedUrl;
     }
-    const urlData = await this.urlRepository.findByShortCode(shortCode);
+    const urlData = await this.urlRepository.findByShortCode(shortCode, userId);
     if (!urlData) {
       const error = new Error("Short URL not found");
       error.statusCode = 404;
@@ -40,7 +41,8 @@ export class UrlService {
   }
 
   async redirect(shortCode, req) {
-    const cacheKey = `${this.#cacheKeyPrefix + shortCode}`;
+    const userId = req.user ? req.user.id : null;
+    const cacheKey = `${this.#cacheKeyPrefix + shortCode}|${userId}`;
     const cachedUrl = await redisClient.get(cacheKey);
     if (cachedUrl) {
       await clickQueue.add("click-tracking", {

@@ -16,10 +16,11 @@ export class UrlRepository {
     return result;
   }
 
-  async findByShortCode(shortCode) {
+  async findByShortCode(shortCode, userId) {
     return prisma.url.findUnique({
       where: {
         shortCode,
+        ...userId && { userId },
       },
     });
   }

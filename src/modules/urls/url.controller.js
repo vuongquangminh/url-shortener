@@ -9,7 +9,8 @@ export class UrlController {
   createShortUrl = async (req, res, next) => {
     try {
       const body = validateData(createUrlSchema, req.body);
-      const shortUrl = await this.urlService.create(body.url);
+      const userId = req.user ? req.user.id : null;
+      const shortUrl = await this.urlService.create(body.url, userId);
       return res.status(201).json({
         success: true,
         message: "Short URL created successfully",
@@ -23,7 +24,8 @@ export class UrlController {
   };
   redirectToLongUrl = async (req, res) => {
     const { shortUrl } = req.params;
-    const longUrl = await this.urlService.getLongUrl(shortUrl);
+    const userId = req.user ? req.user.id : null;
+    const longUrl = await this.urlService.getLongUrl(shortUrl, userId);
     res.json({
       success: true,
       message: "Redirecting to long URL",

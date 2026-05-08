@@ -1,5 +1,6 @@
 const express = require('express');
 const { UrlController } = require('./url.controller.js');
+const { authMiddleware } = require('../../middlewares/auth.middleware.js');
 
 const router = express.Router();
 
@@ -11,7 +12,7 @@ router.get('/test', (req, res) => {
   });
 });
 
-router.post('/post', urlController.createShortUrl);
+router.post('/post', authMiddleware, urlController.createShortUrl);
 router.get('/:shortUrl', urlController.redirectToLongUrl);
 // router.get('/:shortCode/stats', urlController.getUrlStats);
 module.exports = router;

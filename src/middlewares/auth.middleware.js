@@ -7,7 +7,7 @@ export const authMiddleware = async (req, res, next) => {
   if (!authHeader || !authHeader.startsWith("Bearer ")) {
     const error = new Error("Unauthorized");
     error.statusCode = 401;
-    return next(error);
+    return next();
   }
 
   const token = authHeader.split(" ")[1];

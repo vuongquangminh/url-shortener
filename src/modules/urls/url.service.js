@@ -5,8 +5,8 @@ import { nanoid } from "nanoid";
 
 export class UrlService {
   #cacheKeyPrefix = "shortUrl:";
-  constructor() {
-    this.urlRepository = new UrlRepository();
+  constructor(urlRepository) {
+    this.urlRepository = urlRepository;
   }
   async create(url, userId) {
     const shortCode = nanoid();

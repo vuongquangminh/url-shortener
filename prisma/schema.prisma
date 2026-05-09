@@ -5,32 +5,41 @@ generator client {
 datasource db {
   provider = "postgresql"
 }
-model User {
-  id        Int      @id @default(autoincrement())
-  email     String   @unique
-  password  String
-  name      String?
-  createdAt DateTime @default(now()) @map("created_at")
 
-  urls      Url[]
+enum Role {
+  USER
+  ADMIN
+}
+
+model User {
+  id            Int            @id @default(autoincrement())
+  email         String         @unique
+  password      String
+  name          String?
+  createdAt     DateTime       @default(now()) @map("created_at")
+  role          Role           @default(USER)
+  subscriptions Subscription[]
+  urls          Url[]
 
   @@map("users")
 }
+
 model Url {
-  id          Int   @id @default(autoincrement())
+  id          Int      @id @default(autoincrement())
   userId      Int?     @map("user_id")
   originalUrl String   @unique @map("original_url")
   shortCode   String   @unique @map("short_code")
   clickCount  Int      @default(0) @map("click_count")
   createdAt   DateTime @default(now()) @map("created_at")
-  
-  user        User?      @relation(fields: [userId], references: [id])
-  clicks      UrlClick[]
+
+  user   User?      @relation(fields: [userId], references: [id])
+  clicks UrlClick[]
 
   @@index([userId])
   @@index([createdAt])
   @@map("urls")
 }
+
 model UrlClick {
   id        Int      @id @default(autoincrement())
   urlId     Int      @map("url_id")
@@ -44,4 +53,41 @@ model UrlClick {
   @@index([urlId])
   @@index([clickedAt])
   @@map("url_clicks")
+}
+
+model SubscriptionPlan {
+  id Int @id @default(autoincrement())
+
+  name  String
+  price Float
+
+  description String?
+
+  isActive Boolean @default(true) @map("is_active")
+
+  createdAt DateTime @default(now()) @map("created_at")
+
+  subscriptions Subscription[]
+
+  @@map("subscription_plans")
+}
+
+model Subscription {
+  id Int @id @default(autoincrement())
+
+  userId Int
+  planId Int
+
+  status String
+
+  startDate DateTime  @map("start_date")
+  endDate   DateTime? @map("end_date")
+
+  stripeSubscriptionId String? @map("stripe_subscription_id")
+
+  user User @relation(fields: [userId], references: [id])
+
+  plan SubscriptionPlan @relation(fields: [planId], references: [id])
+
+  @@map("subscriptions")
 }

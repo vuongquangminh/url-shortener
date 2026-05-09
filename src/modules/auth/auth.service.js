@@ -1,17 +1,14 @@
 import { generateToken } from "../../utils/generateToken.js";
+import { hashPassword } from "../../utils/hashPassword.js";
 import { verifyPassword } from "../../utils/verifyPassword.js";
-import { UserRepository } from "./auth.reposotory.js";
+import { UserRepository } from "./auth.repository.js";
 
 export class AuthService {
   constructor() {
     this.userRepository = new UserRepository();
   }
   async register(userData) {
-    const checkExisting = await this.userRepository.findByEmail({
-      where: {
-        email: userData.email,
-      },
-    });
+    const checkExisting = await this.userRepository.findByEmail(userData.email);
     if (checkExisting) {
       throw new Error("User already exists");
     }
@@ -21,6 +18,7 @@ export class AuthService {
   }
   async login(userData) {
     const user = await this.userRepository.findByEmail(userData.email);
+    console.log('111: ', user)
     if (!user) {
       const error = new Error("Email not found!");
       error.status = 404;
@@ -30,7 +28,6 @@ export class AuthService {
       userData.password,
       user.password
     );
-    console.log({'userdata.password': userData.password, 'user.password': user.password, isPasswordValid})
     if (!isPasswordValid) {
       const error = new Error("Invalid password!");
       error.status = 401;

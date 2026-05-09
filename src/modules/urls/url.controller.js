@@ -1,10 +1,9 @@
 import { validateData } from "../../utils/validateData.js";
-import { UrlService } from "./url.service.js";
 import { createUrlSchema } from "./url.validator.js";
 
 export class UrlController {
-  constructor() {
-    this.urlService = new UrlService();
+  constructor(urlService) {
+    this.urlService = urlService;
   }
   createShortUrl = async (req, res, next) => {
     try {

@@ -6,6 +6,7 @@ export const generateToken = (user) => {
     {
       userId: user.id,
       email: user.email,
+      role: user.role,
     },
 
     env.jwtSecret,

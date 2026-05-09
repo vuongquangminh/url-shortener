@@ -3,8 +3,8 @@ import { AuthService } from "./auth.service.js";
 import { createUserSchema, loginUserSchema } from "./auth.validate.js";
 
 export class AuthController {
-  constructor() {
-    this.authService = new AuthService();
+  constructor(authService) {
+    this.authService = authService;
   }
   register = async (req, res, next) => {
     try {

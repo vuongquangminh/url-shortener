@@ -7,6 +7,7 @@ const swaggerSpec = require("./config/swagger.js");
 
 const urlRoutes = require('./modules/urls/url.route');
 const authRoutes = require('./modules/auth/auth.route');
+const adminRoutes = require('./modules/admin/route');
 const errorMiddleware = require('./middlewares/error.middleware');
 const { UrlController } = require('./modules/urls/url.controller');
 const { createUrlRateLimiter } = require('./middlewares/rate-limit.middleware');
@@ -26,6 +27,7 @@ app.use('/api/v1/urls', urlRoutes);
 app.get('/:shortCode', urlController.redirect)
 app.use('/api/v1/auth', authRoutes)
 
+app.use('/api/v1/admin', adminRoutes);
 app.use(errorMiddleware);
 
 module.exports = app;

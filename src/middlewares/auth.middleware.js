@@ -18,6 +18,7 @@ export const authMiddleware = async (req, res, next) => {
     req.user = {
       id: payload.userId,
       email: payload.email,
+      role: payload.role,
     };
 
     next();

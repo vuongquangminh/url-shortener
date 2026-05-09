@@ -1,8 +1,10 @@
-const express = require('express');
-const { AuthController } = require('./auth.controller.js');
-const { authMiddleware } = require('../../middlewares/auth.middleware.js');
+const express = require("express");
+const { AuthController } = require("./auth.controller.js");
+const { authMiddleware } = require("../../middlewares/auth.middleware.js");
+const { AuthService } = require("./auth.service.js");
 
-const authController = new AuthController();
+const authService = new AuthService();
+const authController = new AuthController(authService);
 const router = express.Router();
 /**
  * @swagger
@@ -45,7 +47,7 @@ const router = express.Router();
  *       409:
  *         description: Email already exists
  */
-router.post('/register', authController.register);
+router.post("/register", authController.register);
 /**
  * @swagger
  * /api/v1/auth/login:
@@ -77,7 +79,7 @@ router.post('/register', authController.register);
  *       404:
  *         description: User not found
  */
-router.post('/login', authController.login);
+router.post("/login", authController.login);
 /**
  * @swagger
  * /api/v1/auth/me:
@@ -93,6 +95,6 @@ router.post('/login', authController.login);
  *       401:
  *         description: Unauthorized
  */
-router.get('/me', authMiddleware, authController.getProfile);
+router.get("/me", authMiddleware, authController.getProfile);
 
 module.exports = router;

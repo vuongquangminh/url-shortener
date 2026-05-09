@@ -1,10 +1,14 @@
-const express = require('express');
-const { UrlController } = require('./url.controller.js');
-const { authMiddleware } = require('../../middlewares/auth.middleware.js');
+const express = require("express");
+const { UrlController } = require("./url.controller.js");
+const { authMiddleware } = require("../../middlewares/auth.middleware.js");
+const { UrlService } = require("./url.service.js");
+const { UrlRepository } = require("./url.repository.js");
 
 const router = express.Router();
 
-const urlController = new UrlController();
+const urlRepository = new UrlRepository();
+const urlService = new UrlService(urlRepository);
+const urlController = new UrlController(urlService);
 
 /**
  * @swagger
@@ -42,12 +46,12 @@ const urlController = new UrlController();
  *       401:
  *         description: Unauthorized
  */
-router.post('/post', authMiddleware, urlController.createShortUrl);
+router.post("/post", authMiddleware, urlController.createShortUrl);
 /**
  * @swagger
  * /api/v1/urls/{shortUrl}:
  *   get:
- *     summary: Redirect to original URL
+ *     summary: Get original URL by shortUrl
  *     description: Redirect user from short URL to original long URL.
  *     tags: [URLs]
  *     parameters:
@@ -63,6 +67,6 @@ router.post('/post', authMiddleware, urlController.createShortUrl);
  *       404:
  *         description: Short URL not found
  */
-router.get('/:shortUrl', urlController.redirectToLongUrl);
+router.get("/:shortUrl", urlController.redirectToLongUrl);
 // router.get('/:shortCode/stats', urlController.getUrlStats);
 module.exports = router;

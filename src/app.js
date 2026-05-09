@@ -28,6 +28,10 @@ app.get('/:shortCode', urlController.redirect)
 app.use('/api/v1/auth', authRoutes)
 
 app.use('/api/v1/admin', adminRoutes);
+
+app.get('/kepp-alive', (req, res) => {
+  res.status(200).json({ message: 'Server is alive!' });
+});
 app.use(errorMiddleware);
 
 module.exports = app;

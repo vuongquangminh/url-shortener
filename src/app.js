@@ -11,6 +11,8 @@ const adminRoutes = require('./modules/admin/route');
 const errorMiddleware = require('./middlewares/error.middleware');
 const { UrlController } = require('./modules/urls/url.controller');
 const { createUrlRateLimiter } = require('./middlewares/rate-limit.middleware');
+const { UrlRepository } = require('./modules/urls/url.repository.js');
+const { UrlService } = require('./modules/urls/url.service.js');
 const app = express();
 
 app.use(helmet());
@@ -20,18 +22,19 @@ app.use(express.json());
 app.use(createUrlRateLimiter); // Apply to all requests
 
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
-
-const urlController = new UrlController();
+const urlRepository = new UrlRepository();
+const urlService = new UrlService(urlRepository);
+const urlController = new UrlController(urlService);
 
 app.use('/api/v1/urls', urlRoutes);
 app.get('/:shortCode', urlController.redirect)
 app.use('/api/v1/auth', authRoutes)
 
+app.get('/wakeup/keep-alive', (req, res) => {
+  return res.status(200).json({ message: 'Server is awake!' });
+});
 app.use('/api/v1/admin', adminRoutes);
 
-app.get('/kepp-alive', (req, res) => {
-  res.status(200).json({ message: 'Server is alive!' });
-});
 app.use(errorMiddleware);
 
 module.exports = app;

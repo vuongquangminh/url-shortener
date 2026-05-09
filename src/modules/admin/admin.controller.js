@@ -1,4 +1,3 @@
-import { ca } from "zod/locales";
 import { AuthController } from "../auth/auth.controller.js";
 
 export class AdminController extends AuthController {
@@ -175,10 +174,7 @@ export class AdminController extends AuthController {
     try {
       const userId = req.params.id;
       const subPlanId = req.body.subPlanId;
-      const result = this.subscriptionService.deleteAssignedSubscription(
-        userId,
-        subPlanId
-      );
+      this.subscriptionService.deleteAssignedSubscription(userId, subPlanId);
       res.json({
         success: true,
         message: "SubscriptionPlan deleted successfully",
@@ -186,5 +182,5 @@ export class AdminController extends AuthController {
     } catch (error) {
       next(error);
     }
-  }
+  };
 }

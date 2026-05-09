@@ -1,10 +1,12 @@
+import { ca } from "zod/locales";
 import { AuthController } from "../auth/auth.controller.js";
 
 export class AdminController extends AuthController {
-  constructor(userService, subscriptionPlanService) {
+  constructor(userService, subscriptionPlanService, subscriptionService) {
     super();
     this.userService = userService;
     this.subscriptionPlanService = subscriptionPlanService;
+    this.subscriptionService = subscriptionService;
   }
   login = async (req, res, next) => {
     try {
@@ -133,4 +135,56 @@ export class AdminController extends AuthController {
       next(error);
     }
   };
+  assignSubscription = async (req, res, next) => {
+    const userId = req.params.id;
+    const { subPlanId } = req.body;
+    try {
+      const result = await this.subscriptionService.assignSubscription(
+        userId,
+        subPlanId
+      );
+      res.json({
+        success: true,
+        message: "SubscriptionPlan assigned successfully",
+        data: { result },
+      });
+    } catch (error) {
+      next(error);
+    }
+  };
+  updateAssignedSubscription = async (req, res, next) => {
+    try {
+      const userId = req.params.id;
+      const subPlanId = req.body.subPlanId;
+      const status = req.body.status;
+      const result = this.subscriptionService.updateAssignedSubscription(
+        userId,
+        subPlanId,
+        status
+      );
+      res.json({
+        success: true,
+        message: "SubscriptionPlan updated successfully",
+        data: { result },
+      });
+    } catch (error) {
+      next(error);
+    }
+  };
+  deleteAssignedSubscription = async (req, res, next) => {
+    try {
+      const userId = req.params.id;
+      const subPlanId = req.body.subPlanId;
+      const result = this.subscriptionService.deleteAssignedSubscription(
+        userId,
+        subPlanId
+      );
+      res.json({
+        success: true,
+        message: "SubscriptionPlan deleted successfully",
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
 }

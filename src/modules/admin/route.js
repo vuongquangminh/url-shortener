@@ -9,13 +9,21 @@ const {
 const {
   SubscriptionPlanService,
 } = require("./subscriptions/subscriptionPlan.service.js");
+const {
+  SubscriptionService,
+} = require("./subscriptions/subscription.service.js");
+const {
+  SubscriptionRepository,
+} = require("./subscriptions/subscription.repository.js");
 const router = express.Router();
 
 const userSvc = new UserService();
-const subRepo = new SubscriptionPlanRepository();
-const subSvc = new SubscriptionPlanService(subRepo);
+const subPlanRepo = new SubscriptionPlanRepository();
+const subPlanSvc = new SubscriptionPlanService(subPlanRepo);
+const subRepo = new SubscriptionRepository();
+const subSvc = new SubscriptionService(subRepo);
 
-const adminController = new AdminController(userSvc, subSvc);
+const adminController = new AdminController(userSvc, subPlanSvc, subSvc);
 
 /**
  * @swagger
@@ -355,6 +363,107 @@ router.delete(
   authMiddleware,
   roleAdminMiddleware,
   adminController.deleteSubscriptionPlan
+);
+
+/**
+ * @swagger
+ * /api/v1/admin/users/{id}/assign:
+ *   post:
+ *     summary: Assign subscription to someone
+ *     tags: [Admin]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *         example: 1
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - subPlanId
+ *             properties:
+ *               name:
+ *                 subPlanId: number
+ *                 example: 2
+ *     responses:
+ *       201:
+ *         description: Assign to user 2 successfully
+ *       400:
+ *         description: Validation error
+ *       401:
+ *         description: Unauthorized
+ *       403:
+ *         description: Admin only
+ */
+router.post(
+  "/users/:id/assign",
+  authMiddleware,
+  roleAdminMiddleware,
+  adminController.assignSubscription
+);
+/**
+ * @swagger
+ * /api/v1/admin/users/{id}/assign:
+ *   put:
+ *     summary: Assign subscription plan to user
+ *     description: Assign or update a user's subscription plan status.
+ *     tags: [Admin]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *         example: 1
+ *         description: User ID
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - subPlanId
+ *               - status
+ *             properties:
+ *               subPlanId:
+ *                 type: integer
+ *                 example: 5
+ *               status:
+ *                 type: string
+ *                 example: "ACTIVE"
+ *     responses:
+ *       200:
+ *         description: Subscription assigned successfully
+ *       400:
+ *         description: Validation error
+ *       401:
+ *         description: Unauthorized
+ *       403:
+ *         description: Admin only
+ *       404:
+ *         description: User or subscription plan not found
+ */
+router.put(
+  "/users/:id/assign",
+  authMiddleware,
+  roleAdminMiddleware,
+  adminController.updateAssignedSubscription
+);
+router.delete(
+  "/users/:id/assign",
+  authMiddleware,
+  roleAdminMiddleware,
+  adminController.deleteAssignedSubscription
 );
 
 module.exports = router;

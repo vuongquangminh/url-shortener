@@ -1,11 +1,10 @@
 import { generateToken } from "../../utils/generateToken.js";
 import { hashPassword } from "../../utils/hashPassword.js";
 import { verifyPassword } from "../../utils/verifyPassword.js";
-import { UserRepository } from "./auth.repository.js";
 
 export class AuthService {
-  constructor() {
-    this.userRepository = new UserRepository();
+  constructor(userRepository) {
+    this.userRepository = userRepository;
   }
   async register(userData) {
     const checkExisting = await this.userRepository.findByEmail(userData.email);
@@ -18,7 +17,6 @@ export class AuthService {
   }
   async login(userData) {
     const user = await this.userRepository.findByEmail(userData.email);
-    console.log('111: ', user)
     if (!user) {
       const error = new Error("Email not found!");
       error.status = 404;
@@ -35,6 +33,15 @@ export class AuthService {
     }
     const token = await generateToken(user);
     user.token = token;
+    return user;
+  }
+  async getProfile(userId) {
+    const user = await this.userRepository.getProfile(userId);
+    if (!user) {
+      const error = new Error("User not found!");
+      error.status = 404;
+      throw error;
+    }
     return user;
   }
 }

@@ -1,5 +1,4 @@
 import { validateData } from "../../utils/validateData.js";
-import { AuthService } from "./auth.service.js";
 import { createUserSchema, loginUserSchema } from "./auth.validate.js";
 
 export class AuthController {
@@ -37,13 +36,16 @@ export class AuthController {
     }
   };
   getProfile = async (req, res) => {
-    const user = req.user;
-    res.json({
-      success: true,
-      message: "User profile retrieved successfully",
-      data: {
-        user,
-      },
-    });
+    try {
+      const user = req.user;
+      const detaiUser = await this.authService.getProfile(user.id);
+      res.json({
+        success: true,
+        message: "User profile retrieved successfully",
+        data: {
+          detaiUser,
+        },
+      });
+    } catch (error) {}
   };
 }

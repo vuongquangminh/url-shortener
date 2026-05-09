@@ -1,7 +1,6 @@
 import { prisma } from "../../config/prisma.js";
 
 export class UserRepository {
-  constructor() {}
 
   async register(userData) {
     const result = await prisma.user.create({
@@ -13,6 +12,19 @@ export class UserRepository {
     const user = await prisma.user.findUnique({
       where: {
         email,
+      },
+    });
+    return user;
+  }
+  async getProfile(userId) {
+    const user = await prisma.user.findUnique({
+      where: { id: userId },
+      select: {
+        id: true,
+        email: true,
+        name: true,
+        role: true,
+        subscriptions: true, // Lấy quan hệ trực tiếp trong select luôn
       },
     });
     return user;

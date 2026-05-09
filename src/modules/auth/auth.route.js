@@ -2,8 +2,10 @@ const express = require("express");
 const { AuthController } = require("./auth.controller.js");
 const { authMiddleware } = require("../../middlewares/auth.middleware.js");
 const { AuthService } = require("./auth.service.js");
+const { UserRepository } = require("./user.repository.js");
 
-const authService = new AuthService();
+const userRepository = new UserRepository();
+const authService = new AuthService(userRepository);
 const authController = new AuthController(authService);
 const router = express.Router();
 /**
